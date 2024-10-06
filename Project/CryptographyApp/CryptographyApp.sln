@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptographyApp", "CryptographyApp\CryptographyApp.csproj", "{2BFBCF3B-372A-49C8-B4CB-63E29207BF8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptographyApp", "CryptographyApp\CryptographyApp.csproj", "{2BFBCF3B-372A-49C8-B4CB-63E29207BF8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptographyEngine", "CryptographyEngine\CryptographyEngine.csproj", "{7737706C-6C40-4035-8598-1D00A60DBA25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{2BFBCF3B-372A-49C8-B4CB-63E29207BF8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BFBCF3B-372A-49C8-B4CB-63E29207BF8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BFBCF3B-372A-49C8-B4CB-63E29207BF8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7737706C-6C40-4035-8598-1D00A60DBA25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7737706C-6C40-4035-8598-1D00A60DBA25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7737706C-6C40-4035-8598-1D00A60DBA25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7737706C-6C40-4035-8598-1D00A60DBA25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
