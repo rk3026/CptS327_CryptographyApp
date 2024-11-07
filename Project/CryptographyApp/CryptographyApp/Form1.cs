@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using CryptographyApp.Tabs;
-using CryptographyEngine.HashingAlgorithms;
 
 namespace CryptographyApp
 {

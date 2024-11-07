@@ -38,21 +38,27 @@
             algorithmTreeView = new TreeView();
             publicKeyTextbox = new TextBox();
             privateKeyTextbox = new TextBox();
-            currentEncryptAlgorithmTextbox = new TextBox();
-            richTextBox1 = new RichTextBox();
-            textBox1 = new TextBox();
             label8 = new Label();
             label7 = new Label();
             label4 = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            currentEncryptAlgorithmTextbox = new TextBox();
+            AlgorithmFullnameTextbox = new TextBox();
+            AlgorithmDescriptionTextbox = new RichTextBox();
+            pictureBox1 = new PictureBox();
+            tableLayoutPanel3 = new TableLayoutPanel();
             tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            tableLayoutPanel3.SuspendLayout();
             SuspendLayout();
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.Top;
             label1.AutoSize = true;
-            label1.Location = new Point(396, 0);
+            label1.Location = new Point(356, 0);
             label1.Name = "label1";
             label1.Size = new Size(77, 20);
             label1.TabIndex = 12;
@@ -62,7 +68,7 @@
             // 
             label2.Anchor = AnchorStyles.Top;
             label2.AutoSize = true;
-            label2.Location = new Point(86, 0);
+            label2.Location = new Point(60, 0);
             label2.Name = "label2";
             label2.Size = new Size(143, 20);
             label2.TabIndex = 13;
@@ -72,7 +78,7 @@
             // 
             label3.Anchor = AnchorStyles.Top;
             label3.AutoSize = true;
-            label3.Location = new Point(618, 0);
+            label3.Location = new Point(604, 0);
             label3.Name = "label3";
             label3.Size = new Size(109, 20);
             label3.TabIndex = 14;
@@ -82,7 +88,7 @@
             // 
             label5.Anchor = AnchorStyles.Top;
             label5.AutoSize = true;
-            label5.Location = new Point(118, 205);
+            label5.Location = new Point(91, 0);
             label5.Name = "label5";
             label5.Size = new Size(80, 20);
             label5.TabIndex = 16;
@@ -92,7 +98,7 @@
             // 
             label6.Anchor = AnchorStyles.Top;
             label6.AutoSize = true;
-            label6.Location = new Point(392, 205);
+            label6.Location = new Point(89, 53);
             label6.Name = "label6";
             label6.Size = new Size(85, 20);
             label6.TabIndex = 17;
@@ -101,9 +107,9 @@
             // encryptInputTextbox
             // 
             encryptInputTextbox.Dock = DockStyle.Fill;
-            encryptInputTextbox.Location = new Point(319, 23);
+            encryptInputTextbox.Location = new Point(266, 23);
             encryptInputTextbox.Name = "encryptInputTextbox";
-            encryptInputTextbox.Size = new Size(231, 179);
+            encryptInputTextbox.Size = new Size(257, 179);
             encryptInputTextbox.TabIndex = 18;
             encryptInputTextbox.Text = "";
             encryptInputTextbox.TextChanged += EncryptCurrentText;
@@ -111,9 +117,9 @@
             // encryptOutputTextbox
             // 
             encryptOutputTextbox.Dock = DockStyle.Fill;
-            encryptOutputTextbox.Location = new Point(556, 23);
+            encryptOutputTextbox.Location = new Point(529, 23);
             encryptOutputTextbox.Name = "encryptOutputTextbox";
-            encryptOutputTextbox.Size = new Size(233, 179);
+            encryptOutputTextbox.Size = new Size(260, 179);
             encryptOutputTextbox.TabIndex = 19;
             encryptOutputTextbox.Text = "";
             // 
@@ -122,52 +128,29 @@
             algorithmTreeView.Dock = DockStyle.Fill;
             algorithmTreeView.Location = new Point(3, 23);
             algorithmTreeView.Name = "algorithmTreeView";
-            algorithmTreeView.Size = new Size(310, 179);
+            algorithmTreeView.Size = new Size(257, 179);
             algorithmTreeView.TabIndex = 20;
             // 
             // publicKeyTextbox
             // 
-            publicKeyTextbox.Anchor = AnchorStyles.Top;
-            publicKeyTextbox.Location = new Point(95, 228);
+            publicKeyTextbox.Dock = DockStyle.Fill;
+            publicKeyTextbox.Location = new Point(3, 23);
             publicKeyTextbox.Name = "publicKeyTextbox";
-            publicKeyTextbox.Size = new Size(125, 27);
+            publicKeyTextbox.Size = new Size(257, 27);
             publicKeyTextbox.TabIndex = 22;
             // 
             // privateKeyTextbox
             // 
-            privateKeyTextbox.Anchor = AnchorStyles.Top;
-            privateKeyTextbox.Location = new Point(372, 228);
+            privateKeyTextbox.Dock = DockStyle.Fill;
+            privateKeyTextbox.Location = new Point(3, 76);
             privateKeyTextbox.Name = "privateKeyTextbox";
-            privateKeyTextbox.Size = new Size(125, 27);
+            privateKeyTextbox.Size = new Size(257, 27);
             privateKeyTextbox.TabIndex = 23;
-            // 
-            // currentEncryptAlgorithmTextbox
-            // 
-            currentEncryptAlgorithmTextbox.Location = new Point(3, 281);
-            currentEncryptAlgorithmTextbox.Name = "currentEncryptAlgorithmTextbox";
-            currentEncryptAlgorithmTextbox.Size = new Size(125, 27);
-            currentEncryptAlgorithmTextbox.TabIndex = 21;
-            // 
-            // richTextBox1
-            // 
-            richTextBox1.Dock = DockStyle.Fill;
-            richTextBox1.Location = new Point(556, 281);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(233, 316);
-            richTextBox1.TabIndex = 27;
-            richTextBox1.Text = "";
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(319, 281);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(205, 27);
-            textBox1.TabIndex = 26;
             // 
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(556, 258);
+            label8.Location = new Point(3, 106);
             label8.Name = "label8";
             label8.Size = new Size(88, 20);
             label8.TabIndex = 25;
@@ -176,7 +159,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(319, 258);
+            label7.Location = new Point(3, 53);
             label7.Name = "label7";
             label7.Size = new Size(79, 20);
             label7.TabIndex = 24;
@@ -185,7 +168,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(3, 258);
+            label4.Location = new Point(3, 0);
             label4.Name = "label4";
             label4.Size = new Size(131, 20);
             label4.TabIndex = 15;
@@ -194,29 +177,24 @@
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 3;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel1.Controls.Add(label5, 0, 2);
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.Controls.Add(encryptOutputTextbox, 2, 1);
-            tableLayoutPanel1.Controls.Add(textBox1, 1, 5);
             tableLayoutPanel1.Controls.Add(label3, 2, 0);
-            tableLayoutPanel1.Controls.Add(label7, 1, 4);
-            tableLayoutPanel1.Controls.Add(label4, 0, 4);
-            tableLayoutPanel1.Controls.Add(publicKeyTextbox, 0, 3);
-            tableLayoutPanel1.Controls.Add(privateKeyTextbox, 1, 3);
-            tableLayoutPanel1.Controls.Add(label8, 2, 4);
-            tableLayoutPanel1.Controls.Add(richTextBox1, 2, 5);
-            tableLayoutPanel1.Controls.Add(currentEncryptAlgorithmTextbox, 0, 5);
-            tableLayoutPanel1.Controls.Add(label6, 1, 2);
             tableLayoutPanel1.Controls.Add(label2, 0, 0);
             tableLayoutPanel1.Controls.Add(label1, 1, 0);
             tableLayoutPanel1.Controls.Add(algorithmTreeView, 0, 1);
             tableLayoutPanel1.Controls.Add(encryptInputTextbox, 1, 1);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 7);
+            tableLayoutPanel1.Controls.Add(pictureBox1, 1, 7);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 2, 7);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 6;
+            tableLayoutPanel1.RowCount = 8;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
@@ -225,6 +203,84 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.Size = new Size(792, 600);
             tableLayoutPanel1.TabIndex = 13;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 1;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel2.Controls.Add(currentEncryptAlgorithmTextbox, 0, 1);
+            tableLayoutPanel2.Controls.Add(label4, 0, 0);
+            tableLayoutPanel2.Controls.Add(label7, 0, 2);
+            tableLayoutPanel2.Controls.Add(AlgorithmFullnameTextbox, 0, 3);
+            tableLayoutPanel2.Controls.Add(AlgorithmDescriptionTextbox, 0, 5);
+            tableLayoutPanel2.Controls.Add(label8, 0, 4);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(3, 208);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 6;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.Size = new Size(257, 389);
+            tableLayoutPanel2.TabIndex = 29;
+            // 
+            // currentEncryptAlgorithmTextbox
+            // 
+            currentEncryptAlgorithmTextbox.Dock = DockStyle.Fill;
+            currentEncryptAlgorithmTextbox.Location = new Point(3, 23);
+            currentEncryptAlgorithmTextbox.Name = "currentEncryptAlgorithmTextbox";
+            currentEncryptAlgorithmTextbox.Size = new Size(251, 27);
+            currentEncryptAlgorithmTextbox.TabIndex = 21;
+            // 
+            // AlgorithmFullnameTextbox
+            // 
+            AlgorithmFullnameTextbox.Dock = DockStyle.Fill;
+            AlgorithmFullnameTextbox.Location = new Point(3, 76);
+            AlgorithmFullnameTextbox.Name = "AlgorithmFullnameTextbox";
+            AlgorithmFullnameTextbox.Size = new Size(251, 27);
+            AlgorithmFullnameTextbox.TabIndex = 26;
+            // 
+            // AlgorithmDescriptionTextbox
+            // 
+            AlgorithmDescriptionTextbox.Dock = DockStyle.Fill;
+            AlgorithmDescriptionTextbox.Location = new Point(3, 129);
+            AlgorithmDescriptionTextbox.Name = "AlgorithmDescriptionTextbox";
+            AlgorithmDescriptionTextbox.ReadOnly = true;
+            AlgorithmDescriptionTextbox.Size = new Size(251, 257);
+            AlgorithmDescriptionTextbox.TabIndex = 27;
+            AlgorithmDescriptionTextbox.Text = "";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Location = new Point(266, 208);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(257, 389);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 28;
+            pictureBox1.TabStop = false;
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.ColumnCount = 1;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel3.Controls.Add(label5, 0, 0);
+            tableLayoutPanel3.Controls.Add(privateKeyTextbox, 0, 3);
+            tableLayoutPanel3.Controls.Add(label6, 0, 2);
+            tableLayoutPanel3.Controls.Add(publicKeyTextbox, 0, 1);
+            tableLayoutPanel3.Dock = DockStyle.Fill;
+            tableLayoutPanel3.Location = new Point(529, 208);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 4;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.Size = new Size(260, 389);
+            tableLayoutPanel3.TabIndex = 30;
             // 
             // TextEncryptionTab
             // 
@@ -235,6 +291,11 @@
             Size = new Size(792, 600);
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -250,12 +311,15 @@
         private TreeView algorithmTreeView;
         private TextBox publicKeyTextbox;
         private TextBox privateKeyTextbox;
-        private TextBox currentEncryptAlgorithmTextbox;
-        private RichTextBox richTextBox1;
-        private TextBox textBox1;
         private Label label8;
         private Label label7;
         private Label label4;
         private TableLayoutPanel tableLayoutPanel1;
+        private PictureBox pictureBox1;
+        private TextBox currentEncryptAlgorithmTextbox;
+        private RichTextBox AlgorithmDescriptionTextbox;
+        private TextBox AlgorithmFullnameTextbox;
+        private TableLayoutPanel tableLayoutPanel2;
+        private TableLayoutPanel tableLayoutPanel3;
     }
 }

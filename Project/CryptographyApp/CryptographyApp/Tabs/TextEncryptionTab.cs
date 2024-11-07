@@ -1,77 +1,84 @@
-﻿using System;
-using System.Drawing;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Windows.Forms;
+using CryptographyAppEngine;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Engines;
 
 namespace CryptographyApp.Tabs
 {
     public partial class TextEncryptionTab : UserControl
     {
-        private byte[] _key;
-        private byte[] _iv;
+        private byte[] publicKey;
+        private byte[] privateKey;
+        private byte[] initializationVector;
+
+        // Asymmetric Algorithms:
+        private RSA rsa;
+
+        // Symmetric Algorithms:
+        private Aes aes;
+        private DES des;
+        private RC4 rc4;
+        private IStreamCipher salsa20Cipher;
+        private IStreamCipher chaCha20Cipher;
+
+        private readonly Dictionary<string, string> algorithmImages = new()
+        {
+            { "RSA", "images/rsa.png" },
+            { "AES", "images/aes.png" },
+            { "DES", "images/des.png" },
+            { "RC4", "images/rc4.png" },
+            { "Salsa20", "images/salsa20.png" },
+            { "ChaCha20", "images/chacha20.png" }
+        };
 
         public TextEncryptionTab()
         {
             InitializeComponent();
-
-            // Disable editing on the output textboxes
-            encryptOutputTextbox.ReadOnly = true;
-
-            encryptInputTextbox.TextChanged += EncryptCurrentText;
-            algorithmTreeView.BeforeSelect += algorithmTreeView_BeforeSelect;
-            algorithmTreeView.AfterSelect += OnAlgorithmChanged;
-
-            // Settings for the tree:
-            algorithmTreeView.HideSelection = false;
-            algorithmTreeView.DrawMode = TreeViewDrawMode.OwnerDrawText;
-            algorithmTreeView.DrawNode += algorithmTreeView_DrawNode;
+            ConfigureUI();
+            InitializeCryptoAlgorithms();
             PopulateAlgorithmTree();
-
-            // Generate a new key and IV for AES/DES when the form is initialized
             GenerateKeyAndIV();
         }
 
-        public void PopulateAlgorithmTree()
+        private void ConfigureUI()
         {
-            // Create the root nodes (categories)
-            TreeNode asymmetricNode = new TreeNode("Asymmetric");
-            TreeNode symmetricNode = new TreeNode("Symmetric");
+            encryptOutputTextbox.ReadOnly = true;
+            encryptInputTextbox.TextChanged += EncryptCurrentText;
+            algorithmTreeView.BeforeSelect += AlgorithmTreeView_BeforeSelect;
+            algorithmTreeView.AfterSelect += OnAlgorithmChanged;
+            algorithmTreeView.HideSelection = false;
+            algorithmTreeView.DrawMode = TreeViewDrawMode.OwnerDrawText;
+            algorithmTreeView.DrawNode += AlgorithmTreeView_DrawNode;
+        }
 
-            // Add child nodes under Asymmetric (e.g., RSA)
-            TreeNode rsaNode = new TreeNode("RSA");
-            asymmetricNode.Nodes.Add(rsaNode);
+        private void InitializeCryptoAlgorithms()
+        {
+            rsa = RSA.Create();
+            aes = Aes.Create();
+            des = DES.Create();
+            rc4 = new RC4();
+            salsa20Cipher = new Salsa20Engine();
+            chaCha20Cipher = new ChaCha7539Engine();
+        }
 
-            // Add child nodes under Symmetric
-            TreeNode streamCiphersNode = new TreeNode("Stream Ciphers");
-            TreeNode blockCiphersNode = new TreeNode("Block Ciphers");
-
-            // Add child nodes under Block Ciphers (e.g., AES, DES)
-            TreeNode aesNode = new TreeNode("AES");
-            TreeNode desNode = new TreeNode("DES");
-            blockCiphersNode.Nodes.Add(aesNode);
-            blockCiphersNode.Nodes.Add(desNode);
-
-            symmetricNode.Nodes.Add(streamCiphersNode);
-            symmetricNode.Nodes.Add(blockCiphersNode);
-
-            // Add root nodes to the TreeView
-            algorithmTreeView.Nodes.Add(asymmetricNode);
-            algorithmTreeView.Nodes.Add(symmetricNode);
-
-            // Expand the root nodes (optional)
+        private void PopulateAlgorithmTree()
+        {
+            var asymmetricNode = new TreeNode("Asymmetric", new[] { new TreeNode("RSA") });
+            var blockCiphersNode = new TreeNode("Block Ciphers", new[] { new TreeNode("AES"), new TreeNode("DES") });
+            var streamCiphersNode = new TreeNode("Stream Ciphers", new[] { new TreeNode("RC4"), new TreeNode("Salsa20"), new TreeNode("ChaCha20") });
+            var symmetricNode = new TreeNode("Symmetric", new[] { blockCiphersNode, streamCiphersNode });
+            algorithmTreeView.Nodes.AddRange(new[] { asymmetricNode, symmetricNode });
             algorithmTreeView.ExpandAll();
         }
 
-        private void algorithmTreeView_DrawNode(object sender, DrawTreeNodeEventArgs e)
+        private void AlgorithmTreeView_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
-            // Check if the node is selected
-            bool isSelected = (e.State & TreeNodeStates.Selected) != 0;
-
-            // Custom background color for selected nodes
+            var isSelected = (e.State & TreeNodeStates.Selected) != 0;
             if (isSelected)
             {
-                e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds); // Change the color to your preference
+                e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds);
                 TextRenderer.DrawText(e.Graphics, e.Node.Text, algorithmTreeView.Font, e.Bounds, Color.Black, TextFormatFlags.GlyphOverhangPadding);
             }
             else
@@ -80,122 +87,176 @@ namespace CryptographyApp.Tabs
             }
         }
 
-        private void algorithmTreeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        private void AlgorithmTreeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
-            // Check if the node has child nodes (i.e., it's not a leaf node)
             if (e.Node.Nodes.Count > 0)
-            {
-                // Cancel the selection if the node is not a leaf node
                 e.Cancel = true;
-            }
         }
 
-        // This method will handle the algorithm change
         private void OnAlgorithmChanged(object sender, EventArgs e)
         {
-            if (sender is TreeView tv && tv.Name == "algorithmTreeView")
-            {
-                currentEncryptAlgorithmTextbox.Text = algorithmTreeView.SelectedNode.Text;
-                GenerateKeyAndIV(); // Regenerate key and IV based on the selected algorithm
-                EncryptCurrentText(encryptInputTextbox, new EventArgs());
-            }
+            GenerateKeyAndIV();
+            UpdateUIForAlgorithm();
+            EncryptCurrentText(encryptInputTextbox, EventArgs.Empty);
         }
 
         private void GenerateKeyAndIV()
         {
-            // Choose the algorithm type
-            string selectedAlgorithm = algorithmTreeView.SelectedNode?.Text;  // Get the selected node's text
+            string selectedAlgorithm = algorithmTreeView.SelectedNode?.Text;
+            if (selectedAlgorithm == null) return;
 
-            if (selectedAlgorithm == "AES")
+            void GenerateSymmetricKey(SymmetricAlgorithm algorithm, int keySize)
             {
-                using (Aes aes = Aes.Create())
-                {
-                    aes.KeySize = 256; // Set key size to 256 bits
-                    aes.GenerateKey();
-                    aes.GenerateIV();
-                    _key = aes.Key;
-                    _iv = aes.IV;
-                }
-            }
-            else if (selectedAlgorithm == "DES")
-            {
-                using (DES des = DES.Create())
-                {
-                    des.GenerateKey(); // Generates a valid 64-bit key (8 bytes)
-                    des.GenerateIV();  // Generates an initialization vector
-                    _key = des.Key;
-                    _iv = des.IV;
-                }
+                algorithm.KeySize = keySize;
+                algorithm.GenerateKey();
+                algorithm.GenerateIV();
+                publicKey = algorithm.Key;
+                initializationVector = algorithm.IV;
             }
 
-            if (_key != null)
+            switch (selectedAlgorithm)
             {
-                publicKeyTextbox.Text = Convert.ToBase64String(_key); // Display the key in Base64 format
+                case "AES":
+                    GenerateSymmetricKey(aes, 256);
+                    privateKey = null;
+                    break;
+                case "DES":
+                    GenerateSymmetricKey(des, 64);
+                    privateKey = null;
+                    break;
+                case "RC4":
+                    publicKey = GenerateRandomBytes(16);
+                    privateKey = null;
+                    break;
+                case "Salsa20":
+                    publicKey = GenerateRandomBytes(32);
+                    privateKey = null;
+                    break;
+                case "ChaCha20":
+                    publicKey = GenerateRandomBytes(32);
+                    privateKey = null;
+                    break;
+                case "RSA":
+                    rsa.KeySize = 2048; // Adjust as needed (2048 or 4096 is typical for RSA)
+                    publicKey = rsa.ExportRSAPublicKey();
+                    privateKey = rsa.ExportRSAPrivateKey();
+                    break;
+            }
+        }
+
+        private void UpdateUIForAlgorithm()
+        {
+            currentEncryptAlgorithmTextbox.Text = algorithmTreeView.SelectedNode.Text;
+            string selectedAlgorithm = algorithmTreeView.SelectedNode?.Text;
+            switch (selectedAlgorithm)
+            {
+                case "AES":
+                    AlgorithmFullnameTextbox.Text = "Advanced Encryption Standard";
+                    AlgorithmDescriptionTextbox.Text = "AES is a widely used symmetric key encryption algorithm with key sizes of 128, 192, and 256 bits.";
+                    break;
+                case "DES":
+                    AlgorithmFullnameTextbox.Text = "Data Encryption Standard";
+                    AlgorithmDescriptionTextbox.Text = "DES is a symmetric-key algorithm that uses a 56-bit key, making it relatively weak today.";
+                    break;
+                case "RC4":
+                    AlgorithmFullnameTextbox.Text = "RC4";
+                    AlgorithmDescriptionTextbox.Text = "RC4 is a stream cipher with variable-length keys, now considered insecure.";
+                    break;
+                case "Salsa20":
+                    AlgorithmFullnameTextbox.Text = "Salsa20";
+                    AlgorithmDescriptionTextbox.Text = "Salsa20 is a fast stream cipher operating on 64-byte blocks.";
+                    break;
+                case "ChaCha20":
+                    AlgorithmFullnameTextbox.Text = "ChaCha20";
+                    AlgorithmDescriptionTextbox.Text = "ChaCha20 is a modern, secure stream cipher and a variant of Salsa20.";
+                    break;
+                case "RSA":
+                    AlgorithmFullnameTextbox.Text = "RSA";
+                    AlgorithmDescriptionTextbox.Text = "RSA is an asymmetric encryption algorithm used for secure data transmission.";
+                    break;
+            }
+
+            publicKeyTextbox.Text = publicKey != null ? Convert.ToBase64String(publicKey) : "N/A";
+            privateKeyTextbox.Text = privateKey != null ? Encoding.UTF8.GetString(privateKey) : "N/A";
+            LoadAlgorithmImage(selectedAlgorithm);
+        }
+
+        private byte[] GenerateRandomBytes(int numBytes)
+        {
+            var bytes = new byte[numBytes];
+            using var rng = new RNGCryptoServiceProvider();
+            rng.GetBytes(bytes);
+            return bytes;
+        }
+
+        private void LoadAlgorithmImage(string algorithm)
+        {
+            if (algorithmImages.TryGetValue(algorithm, out var imagePath))
+            {
+                try
+                {
+                    pictureBox1.Image = Image.FromFile(imagePath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading image: {ex.Message}");
+                    pictureBox1.Image = null;
+                }
             }
         }
 
         private void EncryptCurrentText(object sender, EventArgs e)
         {
             string plainText = encryptInputTextbox.Text;
-            if (string.IsNullOrEmpty(plainText)) { return; }
+            if (string.IsNullOrEmpty(plainText)) return;
 
             byte[] data = Encoding.UTF8.GetBytes(plainText);
             byte[] encryptedData = null;
+            string selectedAlgorithm = algorithmTreeView.SelectedNode?.Text;
 
-            // Check selected encryption algorithm
-            string selectedAlgorithm = algorithmTreeView.SelectedNode?.Text; // Get the selected algorithm text
-            if (selectedAlgorithm == "AES")
+            byte[] EncryptWithStreamCipher(IStreamCipher cipher, int nonceSize)
             {
-                using (Aes aes = Aes.Create())
-                {
-                    aes.Key = _key;
-                    aes.IV = _iv;
-
-                    using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
-                    {
-                        encryptedData = PerformCryptography(data, encryptor);
-                    }
-                }
-            }
-            else if (selectedAlgorithm == "DES")
-            {
-                using (DES des = DES.Create())
-                {
-                    des.Key = _key;
-                    des.IV = _iv;
-
-                    using (var encryptor = des.CreateEncryptor(des.Key, des.IV))
-                    {
-                        encryptedData = PerformCryptography(data, encryptor);
-                    }
-                }
-            }
-            else if (selectedAlgorithm == "RSA")
-            {
-                // Handle RSA encryption here if implemented
-                return;
-            }
-            else
-            {
-                Console.WriteLine("No valid algorithm selected.");
-                return;
+                var nonce = GenerateRandomBytes(nonceSize);
+                var keyParam = new KeyParameter(publicKey);
+                cipher.Init(true, new ParametersWithIV(keyParam, nonce));
+                var output = new byte[data.Length];
+                cipher.ProcessBytes(data, 0, data.Length, output, 0);
+                return output;
             }
 
-            // Display the encrypted text in Base64 format
-            encryptOutputTextbox.Text = Convert.ToBase64String(encryptedData);
+            switch (selectedAlgorithm)
+            {
+                case "AES":
+                    encryptedData = PerformCryptography(data, aes.CreateEncryptor(publicKey, initializationVector));
+                    break;
+                case "DES":
+                    encryptedData = PerformCryptography(data, des.CreateEncryptor(publicKey, initializationVector));
+                    break;
+                case "RC4":
+                    encryptedData = rc4.Encrypt(data, publicKey);
+                    break;
+                case "Salsa20":
+                    encryptedData = EncryptWithStreamCipher(salsa20Cipher, 8);
+                    break;
+                case "ChaCha20":
+                    encryptedData = EncryptWithStreamCipher(chaCha20Cipher, 12);
+                    break;
+                case "RSA":
+                    encryptedData = rsa.Encrypt(data, RSAEncryptionPadding.Pkcs1);
+                    return;
+            }
+
+            if (encryptedData != null)
+                encryptOutputTextbox.Text = Convert.ToBase64String(encryptedData);
         }
 
-        private byte[] PerformCryptography(byte[] data, ICryptoTransform cryptoTransform)
+        private byte[] PerformCryptography(byte[] data, ICryptoTransform cryptographer)
         {
-            using (var ms = new System.IO.MemoryStream())
-            {
-                using (var cs = new CryptoStream(ms, cryptoTransform, CryptoStreamMode.Write))
-                {
-                    cs.Write(data, 0, data.Length);
-                    cs.FlushFinalBlock();
-                }
-                return ms.ToArray();
-            }
+            using var memoryStream = new System.IO.MemoryStream();
+            using var cryptoStream = new CryptoStream(memoryStream, cryptographer, CryptoStreamMode.Write);
+            cryptoStream.Write(data, 0, data.Length);
+            cryptoStream.FlushFinalBlock();
+            return memoryStream.ToArray();
         }
     }
 }
