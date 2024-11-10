@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace CryptographyApp
 {
-    public partial class TextHashingTab : UserControl, IDisposable
+    public partial class TextHashingTab : UserControl
     {
         // Private algorithm instances for reuse
         private SHA256 _sha256;

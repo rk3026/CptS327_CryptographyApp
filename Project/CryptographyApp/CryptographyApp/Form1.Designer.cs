@@ -32,8 +32,9 @@ namespace CryptographyApp
         {
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            tabPage3 = new TabPage();
             tabPage2 = new TabPage();
+            tabPage3 = new TabPage();
+            tabPage4 = new TabPage();
             tabControl1.SuspendLayout();
             SuspendLayout();
             // 
@@ -43,6 +44,7 @@ namespace CryptographyApp
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage2);
+            tabControl1.Controls.Add(tabPage4);
             tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
@@ -59,6 +61,16 @@ namespace CryptographyApp
             tabPage1.Text = "Text Encryption";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // tabPage2
+            // 
+            tabPage2.Location = new Point(4, 29);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(792, 417);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "File Encryption";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
             // tabPage3
             // 
             tabPage3.Location = new Point(4, 29);
@@ -69,15 +81,14 @@ namespace CryptographyApp
             tabPage3.Text = "Text Hashing";
             tabPage3.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // tabPage4
             // 
-            tabPage2.Location = new Point(4, 29);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(792, 417);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "File Encrpytion";
-            tabPage2.UseVisualStyleBackColor = true;
+            tabPage4.Location = new Point(4, 29);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Size = new Size(792, 417);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "Password Strength";
+            tabPage4.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -96,5 +107,6 @@ namespace CryptographyApp
         private TabPage tabPage1;
         private TabPage tabPage2;
         private TabPage tabPage3;
+        private TabPage tabPage4;
     }
 }

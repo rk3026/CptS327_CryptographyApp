@@ -28,6 +28,11 @@ namespace CryptographyApp
             fileEncryptTab.Dock = DockStyle.Fill;
             fileEncryptTab.AutoSize = true;
             tabControl1.TabPages[2].Controls.Add(fileEncryptTab);
+
+            var passwordStrengthTab = new PasswordStrengthTab();
+            passwordStrengthTab.Dock = DockStyle.Fill;
+            passwordStrengthTab.AutoSize = true;
+            tabControl1.TabPages[3].Controls.Add(passwordStrengthTab);
         }
     }
 }

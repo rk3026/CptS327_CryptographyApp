@@ -30,6 +30,12 @@ namespace CryptographyAppEngine
             return output;
         }
 
+        public byte[] Decrypt(byte[] data, byte[] key)
+        {
+            return Encrypt(data, key); // Same method is used for encryption and decryption
+        }
+
+
         private void KeySetup(byte[] key)
         {
             int keyLength = key.Length;

@@ -48,8 +48,9 @@
             // 
             // label7
             // 
+            label7.Anchor = AnchorStyles.None;
             label7.AutoSize = true;
-            label7.Location = new Point(530, 0);
+            label7.Location = new Point(613, 0);
             label7.Name = "label7";
             label7.Size = new Size(93, 20);
             label7.TabIndex = 12;
@@ -59,9 +60,9 @@
             // hashInputTextbox
             // 
             hashInputTextbox.Dock = DockStyle.Fill;
-            hashInputTextbox.Location = new Point(3, 23);
+            hashInputTextbox.Location = new Point(266, 23);
             hashInputTextbox.Name = "hashInputTextbox";
-            hashInputTextbox.Size = new Size(257, 98);
+            hashInputTextbox.Size = new Size(258, 98);
             hashInputTextbox.TabIndex = 11;
             hashInputTextbox.Text = "";
             // 
@@ -78,8 +79,9 @@
             // 
             // label6
             // 
+            label6.Anchor = AnchorStyles.None;
             label6.AutoSize = true;
-            label6.Location = new Point(266, 0);
+            label6.Location = new Point(61, 0);
             label6.Name = "label6";
             label6.Size = new Size(140, 20);
             label6.TabIndex = 9;
@@ -90,15 +92,16 @@
             // 
             comboBoxHashing.Dock = DockStyle.Fill;
             comboBoxHashing.FormattingEnabled = true;
-            comboBoxHashing.Location = new Point(266, 23);
+            comboBoxHashing.Location = new Point(3, 23);
             comboBoxHashing.Name = "comboBoxHashing";
-            comboBoxHashing.Size = new Size(258, 28);
+            comboBoxHashing.Size = new Size(257, 28);
             comboBoxHashing.TabIndex = 8;
             // 
             // label5
             // 
+            label5.Anchor = AnchorStyles.None;
             label5.AutoSize = true;
-            label5.Location = new Point(3, 0);
+            label5.Location = new Point(356, 0);
             label5.Name = "label5";
             label5.Size = new Size(77, 20);
             label5.TabIndex = 7;
@@ -111,13 +114,13 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33334F));
-            tableLayoutPanel1.Controls.Add(label5, 0, 0);
             tableLayoutPanel1.Controls.Add(label7, 2, 0);
-            tableLayoutPanel1.Controls.Add(hashInputTextbox, 0, 1);
             tableLayoutPanel1.Controls.Add(hashOutputTextbox, 2, 1);
-            tableLayoutPanel1.Controls.Add(comboBoxHashing, 1, 1);
-            tableLayoutPanel1.Controls.Add(label6, 1, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 2);
+            tableLayoutPanel1.Controls.Add(label6, 0, 0);
+            tableLayoutPanel1.Controls.Add(comboBoxHashing, 0, 1);
+            tableLayoutPanel1.Controls.Add(label5, 1, 0);
+            tableLayoutPanel1.Controls.Add(hashInputTextbox, 1, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -130,6 +133,7 @@
             // 
             // tableLayoutPanel2
             // 
+            tableLayoutPanel2.BackColor = SystemColors.ControlLight;
             tableLayoutPanel2.ColumnCount = 1;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel2.Controls.Add(currentHashAlgorithmTextbox, 0, 1);

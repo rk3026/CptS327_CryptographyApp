@@ -5,7 +5,6 @@ namespace CryptographyApp
     public partial class FileEncryptionTab : UserControl
     {
         // Declare CspParameters and RsaCryptoServiceProvider
-        // objects with global scope of your Form class.
         readonly CspParameters _cspp = new CspParameters();
         RSACryptoServiceProvider _rsa;
 
