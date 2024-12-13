@@ -7,6 +7,7 @@ using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Math;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CryptographyApp.Tabs
 {
@@ -22,8 +23,6 @@ namespace CryptographyApp.Tabs
         private ElGamalEngine elGamalEngine;
         private ElGamalKeyPairGenerator elGamalKeyPairGenerator;
         private AsymmetricCipherKeyPair elGamalKeyPair;
-        // ECDSA (Using System.Security.Cryptography):
-        private ECDsa ecdsa;
 
         // Symmetric Algorithms:
         private Aes aes;
@@ -54,19 +53,31 @@ namespace CryptographyApp.Tabs
         private void ConfigureUI()
         {
             encryptOutputTextbox.ReadOnly = true;
-            encryptInputTextbox.TextChanged += EncryptCurrentText;
+            encryptInputTextbox.TextChanged += EncryptInputTextbox_TextChanged;
             algorithmTreeView.BeforeSelect += AlgorithmTreeView_BeforeSelect;
             algorithmTreeView.AfterSelect += OnAlgorithmChanged;
             algorithmTreeView.HideSelection = false;
             algorithmTreeView.DrawMode = TreeViewDrawMode.OwnerDrawText;
             algorithmTreeView.DrawNode += AlgorithmTreeView_DrawNode;
-            decryptionKeyTextbox.TextChanged += DecryptCurrentText;
+            decryptionKeyTextbox.TextChanged += DecryptionKeyTextbox_TextChanged;
         }
 
-        private void DecryptCurrentText(object? sender, EventArgs e)
+        private void DecryptionKeyTextbox_TextChanged(object? sender, EventArgs e)
+        {
+            DecryptCurrentText();
+        }
+
+        private void EncryptInputTextbox_TextChanged(object? sender, EventArgs e)
+        {
+            EncryptCurrentText();
+            DecryptCurrentText();
+        }
+
+        private void DecryptCurrentText()
         {
             // Clear decryption output:
-            decryptedTextbox.Text = string.Empty;
+            decryptedTextbox.Clear();
+            decryptedTextbox.Clear();
 
             // Get the current encryption algorithm:
             string selectedAlgorithm = algorithmTreeView.SelectedNode?.Text;
@@ -74,7 +85,8 @@ namespace CryptographyApp.Tabs
 
             // Get the encrypted text that will be decrypted:
             string encryptedText = encryptOutputTextbox.Text;
-            if (string.IsNullOrEmpty(encryptedText)) { this.encryptOutputTextbox.Text = string.Empty; return; }
+            if (string.IsNullOrEmpty(encryptedText)) { this.encryptOutputTextbox.Text = string.Empty; return; } // Don't try if no text is provided to decrypt
+            if (string.IsNullOrEmpty(decryptionKeyTextbox.Text)) { return; } // Don't try if no key provided
             byte[] data = Convert.FromBase64String(encryptedText);  // Expecting encrypted data in Base64 format.
             byte[] decryptedData = null;
 
@@ -100,15 +112,14 @@ namespace CryptographyApp.Tabs
                         decryptedData = rc4.Decrypt(data, decryptionKey);
                         break;
                     case "Salsa20":
-                        decryptedData = DecryptWithStreamCipher(salsa20Cipher, 8); // Salsa20 typically uses 8-byte nonce
+                        decryptedData = DecryptWithStreamCipher(salsa20Cipher, decryptionKey, 8, data);
                         break;
-
                     case "ChaCha20":
-                        decryptedData = DecryptWithStreamCipher(chaCha20Cipher, 12); // ChaCha20 uses 12-byte nonce
+                        decryptedData = DecryptWithStreamCipher(chaCha20Cipher, decryptionKey, 12, data);
                         break;
                     case "RSA":
                         rsa.ImportRSAPrivateKey(decryptionKey, out _);
-                        decryptedData = rsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256);
+                        decryptedData = rsa.Decrypt(data, RSAEncryptionPadding.Pkcs1);
                         break;
                     case "ElGamal":
                         BigInteger privateKeyBigInt = new BigInteger(decryptionKey);  // Convert the private key to a BigInteger
@@ -122,11 +133,6 @@ namespace CryptographyApp.Tabs
                         ElGamalPrivateKeyParameters privateKeyParams = new ElGamalPrivateKeyParameters(privateKeyBigInt, elGamalParams);
                         elGamalEngine.Init(false, privateKeyParams);
                         decryptedData = elGamalEngine.ProcessBlock(data, 0, data.Length);
-                        break;
-
-                    case "ECDSA":
-                        // ECDSA is for signatures, not encryption, so no decryption here
-                        // Assuming we don't decrypt with ECDSA and it’s used for signatures verification instead
                         break;
                 }
             }
@@ -142,16 +148,25 @@ namespace CryptographyApp.Tabs
             }
         }
 
-        private byte[] DecryptWithStreamCipher(IStreamCipher cipher, int nonceSize)
+        private byte[] DecryptWithStreamCipher(IStreamCipher cipher, byte[] key, int nonceSize, byte[] data)
         {
-            // Use the nonce to initialize the cipher
-            var nonce = GenerateRandomBytes(nonceSize);  // Assuming a fresh nonce is used for each decryption
-            var keyParam = new KeyParameter(Encoding.UTF8.GetBytes(this.decryptionKeyTextbox.Text));
-            cipher.Init(false, new ParametersWithIV(keyParam, nonce));  // Initialize for decryption (false for decryption mode)
-            var output = new byte[nonce.Length];
-            cipher.ProcessBytes(nonce, 0, nonce.Length, output, 0);
+            // Split the nonce and the ciphertext
+            var nonce = new byte[nonceSize];
+            var ciphertext = new byte[data.Length - nonceSize];
+            Buffer.BlockCopy(data, 0, nonce, 0, nonceSize);
+            Buffer.BlockCopy(data, nonceSize, ciphertext, 0, ciphertext.Length);
+
+            // Initialize the cipher with the extracted nonce and key
+            var keyParam = new KeyParameter(key);
+            cipher.Init(false, new ParametersWithIV(keyParam, nonce));
+
+            // Decrypt the ciphertext
+            var output = new byte[ciphertext.Length];
+            cipher.ProcessBytes(ciphertext, 0, ciphertext.Length, output, 0);
+
             return output;
         }
+
 
         private void InitializeCryptoAlgorithms()
         {
@@ -170,9 +185,6 @@ namespace CryptographyApp.Tabs
             // Generate the ElGamal key pair
             elGamalKeyPair = elGamalKeyPairGenerator.GenerateKeyPair();
 
-            //ECDSA setup:
-            ecdsa = new ECDsaCng();
-
             aes = Aes.Create();
             des = DES.Create();
             rc4 = new RC4();
@@ -182,7 +194,7 @@ namespace CryptographyApp.Tabs
 
         private void PopulateAlgorithmTree()
         {
-            var asymmetricNode = new TreeNode("Asymmetric", new[] { new TreeNode("RSA"), new TreeNode("ElGamal"), new TreeNode("ECDSA") });
+            var asymmetricNode = new TreeNode("Asymmetric", new[] { new TreeNode("RSA"), new TreeNode("ElGamal") });
             var blockCiphersNode = new TreeNode("Block Ciphers", new[] { new TreeNode("AES"), new TreeNode("DES") });
             var streamCiphersNode = new TreeNode("Stream Ciphers", new[] { new TreeNode("RC4"), new TreeNode("Salsa20"), new TreeNode("ChaCha20") });
             var symmetricNode = new TreeNode("Symmetric", new[] { blockCiphersNode, streamCiphersNode });
@@ -212,9 +224,11 @@ namespace CryptographyApp.Tabs
 
         private void OnAlgorithmChanged(object sender, EventArgs e)
         {
+            decryptionKeyTextbox.Clear();
+            decryptedTextbox.Clear();
             GenerateKeyAndIV();
             UpdateUIWhenAlgorithmSelected();
-            EncryptCurrentText(encryptInputTextbox, EventArgs.Empty); // Make sure to encrypt the data with the new algorithm as well
+            EncryptCurrentText(); // Make sure to encrypt the data with the new algorithm as well
         }
 
         private void GenerateKeyAndIV()
@@ -246,11 +260,14 @@ namespace CryptographyApp.Tabs
                     privateKey = null;
                     break;
                 case "Salsa20":
-                    publicKey = GenerateRandomBytes(32);
+                    // Salsa20 requires a 256-bit key (32 bytes) and a 64-bit nonce (8 bytes)
+                    publicKey = GenerateRandomBytes(32);  // 256-bit key
+                    initializationVector = GenerateRandomBytes(8);  // 64-bit nonce/IV
                     privateKey = null;
                     break;
                 case "ChaCha20":
                     publicKey = GenerateRandomBytes(32);
+                    initializationVector = GenerateRandomBytes(8);  // 64-bit nonce for ChaCha20 as well
                     privateKey = null;
                     break;
                 case "RSA":
@@ -262,12 +279,9 @@ namespace CryptographyApp.Tabs
                     publicKey = ((ElGamalPublicKeyParameters)elGamalKeyPair.Public).Y.ToByteArray();
                     privateKey = ((ElGamalPrivateKeyParameters)elGamalKeyPair.Private).X.ToByteArray();
                     break;
-                case "ECDSA":
-                    publicKey = ecdsa.ExportSubjectPublicKeyInfo();
-                    privateKey = ecdsa.ExportECPrivateKey();
-                    break;
             }
         }
+
 
         private void UpdateUIWhenAlgorithmSelected()
         {
@@ -303,11 +317,6 @@ namespace CryptographyApp.Tabs
                     AlgorithmFullnameTextbox.Text = "ElGamal";
                     AlgorithmDescriptionTextbox.Text = "ElGamal is an asymmetric encryption algorithm based on Diffie-Hellman key exchange, used for secure data transmission.";
                     break;
-                case "ECDSA":
-                    AlgorithmFullnameTextbox.Text = "Elliptic Curve Digital Signature Algorithm";
-                    AlgorithmDescriptionTextbox.Text = "ECDSA is an asymmetric encryption algorithm used for digital signatures. It provides security through elliptic curve cryptography, offering smaller key sizes with equivalent security to RSA.";
-                    break;
-
             }
 
             publicKeyTextbox.Text = publicKey != null ? Convert.ToBase64String(publicKey) : "N/A";
@@ -339,7 +348,7 @@ namespace CryptographyApp.Tabs
             }
         }
 
-        private void EncryptCurrentText(object sender, EventArgs e)
+        private void EncryptCurrentText()
         {
             string selectedAlgorithm = algorithmTreeView.SelectedNode?.Text;
             int currentInputLength = this.encryptInputTextbox.Text.Length;
@@ -366,16 +375,6 @@ namespace CryptographyApp.Tabs
             byte[] data = Encoding.UTF8.GetBytes(plainText);
             byte[] encryptedData = null;
 
-            byte[] EncryptWithStreamCipher(IStreamCipher cipher, int nonceSize)
-            {
-                var nonce = GenerateRandomBytes(nonceSize);
-                var keyParam = new KeyParameter(publicKey);
-                cipher.Init(true, new ParametersWithIV(keyParam, nonce));
-                var output = new byte[data.Length];
-                cipher.ProcessBytes(data, 0, data.Length, output, 0);
-                return output;
-            }
-
             switch (selectedAlgorithm)
             {
                 case "AES":
@@ -388,10 +387,10 @@ namespace CryptographyApp.Tabs
                     encryptedData = rc4.Encrypt(data, publicKey);
                     break;
                 case "Salsa20":
-                    encryptedData = EncryptWithStreamCipher(salsa20Cipher, 8);
+                    encryptedData = EncryptWithStreamCipher(salsa20Cipher, 8, data);
                     break;
                 case "ChaCha20":
-                    encryptedData = EncryptWithStreamCipher(chaCha20Cipher, 12);
+                    encryptedData = EncryptWithStreamCipher(chaCha20Cipher, 12, data);
                     break;
                 case "RSA":
                     encryptedData = rsa.Encrypt(data, RSAEncryptionPadding.Pkcs1);
@@ -401,9 +400,6 @@ namespace CryptographyApp.Tabs
                     elGamalEngine.Init(true, elGamalKeyPair.Public);  // Encryption mode
                     encryptedData = elGamalEngine.ProcessBlock(plaintext, 0, plaintext.Length);
                     break;
-                case "ECDSA":
-                    encryptedData = ecdsa.SignData(data, HashAlgorithmName.SHA256);
-                    break;
                 default:
                     encryptedData = null;
                     break;
@@ -412,6 +408,28 @@ namespace CryptographyApp.Tabs
             if (encryptedData != null)
                 encryptOutputTextbox.Text = Convert.ToBase64String(encryptedData);
         }
+
+        private byte[] EncryptWithStreamCipher(IStreamCipher cipher, int nonceSize, byte[] data)
+        {
+            // Generate a nonce
+            var nonce = GenerateRandomBytes(nonceSize);
+
+            // Initialize the cipher with the nonce and key
+            var keyParam = new KeyParameter(publicKey);
+            cipher.Init(true, new ParametersWithIV(keyParam, nonce));
+
+            // Encrypt the data
+            var output = new byte[data.Length];
+            cipher.ProcessBytes(data, 0, data.Length, output, 0);
+
+            // Prepend the nonce to the encrypted data
+            var result = new byte[nonce.Length + output.Length];
+            Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+            Buffer.BlockCopy(output, 0, result, nonce.Length, output.Length);
+
+            return result;
+        }
+
 
         private byte[] PerformCryptography(byte[] data, ICryptoTransform cryptographer)
         {
@@ -441,8 +459,6 @@ namespace CryptographyApp.Tabs
                 case "ElGamal":
                     // The max message length for ElGamal will depend on key size. For 1024-bit keys, set an appropriate limit.
                     return 245 / 2; // Example for a 1024-bit key, adjust as needed
-                case "ECDSA":
-                    return int.MaxValue;
                 default:
                     return -1; // Unknown or unsupported algorithm
             }
@@ -467,6 +483,11 @@ namespace CryptographyApp.Tabs
         private void pasteKeyButton_Click(object sender, EventArgs e)
         {
             decryptionKeyTextbox.Text = Clipboard.GetText();
+        }
+
+        private void clearButton_Click(object sender, EventArgs e)
+        {
+            decryptionKeyTextbox.Clear();
         }
     }
 }

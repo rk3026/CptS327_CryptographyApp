@@ -8,8 +8,8 @@ namespace CryptographyAppEngine
 {
     public class RC4
     {
-        private byte[] S = new byte[256];
-        private int x = 0, y = 0;
+        private byte[] S = new byte[256]; // The state array
+        private int x = 0, y = 0; // Indicies for Pseudo-Random Generation and Key Scheduling
 
         public RC4()
         {
@@ -38,13 +38,24 @@ namespace CryptographyAppEngine
 
         private void KeySetup(byte[] key)
         {
-            int keyLength = key.Length;
+            // Reset x and y
+            x = 0;
+            y = 0;
+
+            // Reset S to the initial permutation
             for (int i = 0; i < 256; i++)
             {
-                x = (x + S[i] + key[i % keyLength]) % 256;
-                Swap(i, x);
+                S[i] = (byte)i;
+            }
+
+            int j = 0;
+            for (int i = 0; i < 256; i++)
+            {
+                j = (j + S[i] + key[i % key.Length]) % 256;
+                Swap(i, j);
             }
         }
+
 
         private byte GenerateKeystreamByte()
         {

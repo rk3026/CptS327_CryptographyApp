@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PasswordStrengthTab));
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
             strengthLabel = new Label();
@@ -40,6 +41,7 @@
             weakPasswordButton = new Button();
             strongPasswordButton = new Button();
             moderatePasswordButton = new Button();
+            richTextBox1 = new RichTextBox();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
@@ -72,6 +74,7 @@
             tableLayoutPanel2.Controls.Add(strengthLabel, 0, 0);
             tableLayoutPanel2.Controls.Add(entropyLabel, 0, 1);
             tableLayoutPanel2.Controls.Add(label4, 0, 2);
+            tableLayoutPanel2.Controls.Add(richTextBox1, 1, 1);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(398, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -180,9 +183,10 @@
             // 
             // strongPasswordButton
             // 
+            strongPasswordButton.Dock = DockStyle.Fill;
             strongPasswordButton.Location = new Point(257, 3);
             strongPasswordButton.Name = "strongPasswordButton";
-            strongPasswordButton.Size = new Size(121, 127);
+            strongPasswordButton.Size = new Size(123, 127);
             strongPasswordButton.TabIndex = 7;
             strongPasswordButton.Text = "Generate Strong Password";
             strongPasswordButton.UseVisualStyleBackColor = true;
@@ -190,6 +194,7 @@
             // 
             // moderatePasswordButton
             // 
+            moderatePasswordButton.Dock = DockStyle.Fill;
             moderatePasswordButton.Location = new Point(130, 3);
             moderatePasswordButton.Name = "moderatePasswordButton";
             moderatePasswordButton.Size = new Size(121, 127);
@@ -197,6 +202,15 @@
             moderatePasswordButton.Text = "Generate Moderate Password";
             moderatePasswordButton.UseVisualStyleBackColor = true;
             moderatePasswordButton.Click += moderatePasswordButton_Click;
+            // 
+            // richTextBox1
+            // 
+            richTextBox1.Dock = DockStyle.Fill;
+            richTextBox1.Location = new Point(133, 139);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new Size(124, 131);
+            richTextBox1.TabIndex = 5;
+            richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
             // PasswordStrengthTab
             // 
@@ -228,5 +242,6 @@
         private TableLayoutPanel tableLayoutPanel2;
         private TableLayoutPanel tableLayoutPanel3;
         private TableLayoutPanel tableLayoutPanel4;
+        private RichTextBox richTextBox1;
     }
 }

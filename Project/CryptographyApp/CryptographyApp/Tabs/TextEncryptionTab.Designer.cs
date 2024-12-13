@@ -41,6 +41,7 @@
             label7 = new Label();
             label4 = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
+            label11 = new Label();
             tableLayoutPanel2 = new TableLayoutPanel();
             currentEncryptAlgorithmTextbox = new TextBox();
             AlgorithmFullnameTextbox = new TextBox();
@@ -57,14 +58,16 @@
             decryptedTextbox = new RichTextBox();
             tableLayoutPanel5 = new TableLayoutPanel();
             decryptionKeyTextbox = new TextBox();
+            tableLayoutPanel6 = new TableLayoutPanel();
             pasteKeyButton = new Button();
-            label11 = new Label();
+            clearButton = new Button();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tableLayoutPanel3.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
+            tableLayoutPanel6.SuspendLayout();
             SuspendLayout();
             // 
             // label2
@@ -115,7 +118,6 @@
             encryptInputTextbox.Size = new Size(146, 153);
             encryptInputTextbox.TabIndex = 18;
             encryptInputTextbox.Text = "";
-            encryptInputTextbox.TextChanged += EncryptCurrentText;
             // 
             // encryptOutputTextbox
             // 
@@ -190,6 +192,7 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.Controls.Add(encryptOutputTextbox, 2, 1);
             tableLayoutPanel1.Controls.Add(label3, 2, 0);
+            tableLayoutPanel1.Controls.Add(label11, 3, 7);
             tableLayoutPanel1.Controls.Add(label2, 0, 0);
             tableLayoutPanel1.Controls.Add(algorithmTreeView, 0, 1);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 7);
@@ -201,7 +204,6 @@
             tableLayoutPanel1.Controls.Add(label10, 4, 0);
             tableLayoutPanel1.Controls.Add(decryptedTextbox, 4, 1);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel5, 3, 1);
-            tableLayoutPanel1.Controls.Add(label11, 3, 7);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -216,6 +218,17 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.Size = new Size(792, 600);
             tableLayoutPanel1.TabIndex = 13;
+            // 
+            // label11
+            // 
+            label11.Anchor = AnchorStyles.None;
+            label11.AutoSize = true;
+            label11.Location = new Point(494, 342);
+            label11.Name = "label11";
+            label11.Size = new Size(118, 120);
+            label11.TabIndex = 36;
+            label11.Text = "Algorithm is Symmetric: Use Public Key\r\nAlgorithm is Asymmetric: Use Private Key\r\n";
+            label11.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel2
             // 
@@ -388,15 +401,15 @@
             // 
             tableLayoutPanel5.ColumnCount = 1;
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             tableLayoutPanel5.Controls.Add(decryptionKeyTextbox, 0, 0);
-            tableLayoutPanel5.Controls.Add(pasteKeyButton, 0, 1);
+            tableLayoutPanel5.Controls.Add(tableLayoutPanel6, 0, 1);
             tableLayoutPanel5.Dock = DockStyle.Fill;
             tableLayoutPanel5.Location = new Point(477, 23);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel5.Size = new Size(152, 179);
             tableLayoutPanel5.TabIndex = 38;
             // 
@@ -409,10 +422,25 @@
             decryptionKeyTextbox.Size = new Size(102, 27);
             decryptionKeyTextbox.TabIndex = 33;
             // 
+            // tableLayoutPanel6
+            // 
+            tableLayoutPanel6.ColumnCount = 2;
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel6.Controls.Add(pasteKeyButton, 1, 0);
+            tableLayoutPanel6.Controls.Add(clearButton, 0, 0);
+            tableLayoutPanel6.Dock = DockStyle.Fill;
+            tableLayoutPanel6.Location = new Point(3, 92);
+            tableLayoutPanel6.Name = "tableLayoutPanel6";
+            tableLayoutPanel6.RowCount = 1;
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel6.Size = new Size(146, 84);
+            tableLayoutPanel6.TabIndex = 34;
+            // 
             // pasteKeyButton
             // 
-            pasteKeyButton.Anchor = AnchorStyles.Top;
-            pasteKeyButton.Location = new Point(46, 92);
+            pasteKeyButton.Location = new Point(76, 3);
             pasteKeyButton.Name = "pasteKeyButton";
             pasteKeyButton.Size = new Size(59, 29);
             pasteKeyButton.TabIndex = 34;
@@ -420,16 +448,16 @@
             pasteKeyButton.UseVisualStyleBackColor = true;
             pasteKeyButton.Click += pasteKeyButton_Click;
             // 
-            // label11
+            // clearButton
             // 
-            label11.Anchor = AnchorStyles.None;
-            label11.AutoSize = true;
-            label11.Location = new Point(494, 342);
-            label11.Name = "label11";
-            label11.Size = new Size(118, 120);
-            label11.TabIndex = 36;
-            label11.Text = "Algorithm is Symmetric: Use Public Key\r\nAlgorithm is Asymmetric: Use Private Key\r\n";
-            label11.TextAlign = ContentAlignment.MiddleCenter;
+            clearButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            clearButton.Location = new Point(3, 3);
+            clearButton.Name = "clearButton";
+            clearButton.Size = new Size(67, 29);
+            clearButton.TabIndex = 35;
+            clearButton.Text = "Clear";
+            clearButton.UseVisualStyleBackColor = true;
+            clearButton.Click += clearButton_Click;
             // 
             // TextEncryptionTab
             // 
@@ -449,6 +477,7 @@
             tableLayoutPanel4.PerformLayout();
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
+            tableLayoutPanel6.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -484,5 +513,7 @@
         private Button copyPrivateButton;
         private TableLayoutPanel tableLayoutPanel5;
         private Button pasteKeyButton;
+        private TableLayoutPanel tableLayoutPanel6;
+        private Button clearButton;
     }
 }
